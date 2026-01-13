@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+# @Author: esheldon
+# @Date:   1969-12-31 16:00:00
+# @Last Modified by:   lshuns
+# @Last Modified time: 2026-01-13 13:22:27
+### Changelog: 
+###           logger.info() -> logger.debug() for less outputs
+
 import logging
 import time
 
@@ -497,7 +505,7 @@ class Metadetect(dict):
         return _result
 
     def _get_mbobs_data(self, key, shear_bands):
-        logger.info("computing mbobs data: %s %s", key, shear_bands)
+        logger.debug("computing mbobs data: %s %s", key, shear_bands)
 
         if key is None:
             mbobs = self.mbobs
@@ -511,12 +519,12 @@ class Metadetect(dict):
                 key = None
 
         if not hasattr(self, "_mbobs_data_cache"):
-            logger.info("set mbobs data caches")
+            logger.debug("set mbobs data caches")
             self._mbobs_data_cache = {}
             self._mcalpsf_data_cache = {}
 
         if key not in self._mbobs_data_cache:
-            logger.info("key %s not in mbobs data cache", key)
+            logger.debug("key %s not in mbobs data cache", key)
             self._mbobs_data_cache[key] = {}
             self._mcalpsf_data_cache[key] = {}
 
@@ -527,14 +535,14 @@ class Metadetect(dict):
             except BootPSFFailure:
                 _psf_fit_flags = procflags.PSF_FAILURE
             self._mcalpsf_data_cache[key]["psf_fit_flags"] = _psf_fit_flags
-            logger.info("PSF fits took %s seconds", time.time() - t0)
+            logger.debug("PSF fits took %s seconds", time.time() - t0)
 
             mcal_res = self._get_all_metacal(mbobs)
             self._mcalpsf_data_cache[key]["mcal_res"] = mcal_res
 
         sbkey = tuple(sorted(shear_bands))
         if sbkey not in self._mbobs_data_cache[key]:
-            logger.info("shear_bands key %s not in mbobs data cache", sbkey)
+            logger.debug("shear_bands key %s not in mbobs data cache", sbkey)
             self._mbobs_data_cache[key][sbkey] = {}
             self._mbobs_data_cache[key][sbkey].update(
                 self._mcalpsf_data_cache[key]
@@ -589,7 +597,7 @@ class Metadetect(dict):
                     coadd=coadd,
                 )
             ft0 = time.time() - ft0
-            logger.info(
+            logger.debug(
                 "fitter %s took %s seconds",
                 fitter.kind
                 if hasattr(fitter, "kind")
@@ -611,7 +619,7 @@ class Metadetect(dict):
                 psf_stats=psf_stats,
                 det_bands=det_bands,
             )
-        logger.info("src measurements took %s seconds", time.time() - t0)
+        logger.debug("src measurements took %s seconds", time.time() - t0)
 
         return res
 
@@ -778,7 +786,7 @@ class Metadetect(dict):
         mbobs_list = mbm.get_mbobs_list(
             weight_type=self["meds"].get("weight_type", "weight"),
         )
-        logger.info("detect took %s seconds", time.time() - t0)
+        logger.debug("detect took %s seconds", time.time() - t0)
 
         return medsifier.cat, mbobs_list
 
@@ -795,7 +803,7 @@ class Metadetect(dict):
             )
         except BootPSFFailure:
             odict = None
-        logger.info("metacal took %s seconds", time.time() - t0)
+        logger.debug("metacal took %s seconds", time.time() - t0)
 
         if self._show and odict is not None:
             import descwl_coadd.vis
